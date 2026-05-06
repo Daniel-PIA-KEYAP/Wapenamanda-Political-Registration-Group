@@ -130,7 +130,7 @@
     </div>
 
     <!-- ADMIN LOGIN -->
-    <div id="adminLogin" class="form-content">
+    <div id="adminLogin" class="form-content hidden">
         <div style="max-width:420px; margin:80px auto; padding:40px; background:#f9f9f9; border-radius:12px;">
             <h2>🔐 Main Admin Login</h2>
             <label>Username</label><input type="text" id="adminUser" value="admin"><br><br>
@@ -211,6 +211,7 @@
 let users = [];
 let messages = [];
 let currentUser = null;
+let adminLoggedIn = false;
 
 const wardToLLG = {
     "Tsak Ward 1": "Tsak LLG", "Tsak Ward 2": "Tsak LLG", "Tsak Ward 19 (Kep)": "Tsak LLG",
@@ -262,6 +263,7 @@ function submitRegistration(e) {
 // Admin Login
 function adminLogin() {
     if (document.getElementById('adminUser').value === "admin" && document.getElementById('adminPass').value === "admin123") {
+        adminLoggedIn = true;
         document.getElementById('adminLogin').classList.add('hidden');
         document.getElementById('adminDashboard').classList.remove('hidden');
         renderUsers();
@@ -271,6 +273,7 @@ function adminLogin() {
 }
 
 function logoutAdmin() {
+    adminLoggedIn = false;
     document.getElementById('adminDashboard').classList.add('hidden');
     document.getElementById('adminLogin').classList.remove('hidden');
 }
@@ -337,12 +340,19 @@ function showUserMessages() {
 // Tab Control
 function switchTab(tab) {
     document.getElementById('registrationForm').classList.toggle('hidden', tab !== 0);
-    document.getElementById('adminDashboard').classList.toggle('hidden', tab !== 1);
     document.getElementById('userMessages').classList.toggle('hidden', tab !== 2);
 
-    document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===tab));
+    if (tab === 1) {
+        // Show login or dashboard depending on authentication state
+        document.getElementById('adminLogin').classList.toggle('hidden', adminLoggedIn);
+        document.getElementById('adminDashboard').classList.toggle('hidden', !adminLoggedIn);
+        if (adminLoggedIn) renderUsers();
+    } else {
+        document.getElementById('adminLogin').classList.add('hidden');
+        document.getElementById('adminDashboard').classList.add('hidden');
+    }
 
-    if (tab === 1) renderUsers();
+    document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===tab));
     if (tab === 2 && currentUser) {
         document.getElementById('userProfilePic').src = currentUser.photo;
         document.getElementById('userFullName').textContent = currentUser.name;
@@ -360,32 +370,21 @@ function showNotification(msg) {
 // Generate QR codes for the registration page URL
 function generateQRCodes() {
     const pageURL = window.location.href.split('#')[0];
+    const commonConfig = { text: pageURL, correctLevel: QRCode.CorrectLevel.M };
 
     new QRCode(document.getElementById('headerQRCode'), {
-        text: pageURL,
-        width: 80,
-        height: 80,
-        colorDark: "#ffffff",
-        colorLight: "transparent",
-        correctLevel: QRCode.CorrectLevel.M
+        ...commonConfig, width: 80, height: 80,
+        colorDark: "#ffffff", colorLight: "transparent"
     });
 
     new QRCode(document.getElementById('registrationQRCode'), {
-        text: pageURL,
-        width: 160,
-        height: 160,
-        colorDark: "#2c3e50",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.M
+        ...commonConfig, width: 160, height: 160,
+        colorDark: "#2c3e50", colorLight: "#ffffff"
     });
 
     new QRCode(document.getElementById('loginQRCode'), {
-        text: pageURL,
-        width: 100,
-        height: 100,
-        colorDark: "#2c3e50",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.M
+        ...commonConfig, width: 100, height: 100,
+        colorDark: "#2c3e50", colorLight: "#ffffff"
     });
 }
 
