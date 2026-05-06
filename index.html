@@ -384,7 +384,8 @@ function switchTab(tab) {
     document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===tab));
 
     if (tab === 2 && currentUser) {
-        document.getElementById('userProfilePic').src = currentUser.photo;
+        const safeProfilePhoto = safeImgSrc(currentUser.photo) || 'https://via.placeholder.com/150?text=Profile';
+        document.getElementById('userProfilePic').src = safeProfilePhoto;
         document.getElementById('userFullName').textContent = currentUser.name;
         showUserMessages();
     }
