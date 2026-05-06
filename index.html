@@ -35,7 +35,8 @@
 
         /* QR Code styles */
         .qr-banner { background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px 20px; margin-top: 18px; display: inline-flex; align-items: center; gap: 18px; }
-        .qr-banner #headerQRCode canvas, .qr-banner #headerQRCode img { border-radius: 6px; }
+        .qr-banner #headerQRCode { background: #1a2533; padding: 5px; border-radius: 6px; }
+        .qr-banner #headerQRCode canvas, .qr-banner #headerQRCode img { border-radius: 4px; display: block; }
         .qr-banner-text { text-align: left; }
         .qr-banner-text strong { font-size: 1em; display: block; }
         .qr-banner-text small { opacity: 0.85; font-size: 0.82em; }
@@ -374,7 +375,7 @@ function generateQRCodes() {
 
     new QRCode(document.getElementById('headerQRCode'), {
         ...commonConfig, width: 80, height: 80,
-        colorDark: "#ffffff", colorLight: "transparent"
+        colorDark: "#ffffff", colorLight: "#1a2533"
     });
 
     new QRCode(document.getElementById('registrationQRCode'), {
